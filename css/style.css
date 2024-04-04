@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css?family=Inconsolata|Karla&display=swap");
 
 :root {
-  --background: #2f2f2e;
-  --darker: #1f1f1f;
+  --background: #0a1824;
+  --darker: #1d3c43;
   --text: #c0c1c5;
-  --primary: #7494ea;
-  --secondary: #3ebae8;
+  --primary: #2a4930;
+  --secondary: #4b8356;
   --accent: #47ff76;
   --error: #e56e6e;
   --font-size-base: 1rem; /* Base font size */
@@ -43,13 +43,10 @@ body {
 
 /* Header Styles */
 .title {
-  margin-bottom: calc(
-    2 * var(--font-size-base)
-  ); /* Adjust margin based on font size */
-  font-size: calc(
-    5 * var(--font-size-base)
-  ); /* Adjust font size based on base font size */
+  margin-bottom: calc(2 * var(--font-size-base));
+  font-size: calc(5 * var(--font-size-base));
   color: var(--primary);
+  transition: font-size 0.3s ease; /* Smoother transition for font size */
 }
 
 .title a {
@@ -57,17 +54,17 @@ body {
   text-decoration: inherit;
 }
 
+.link {
+  color: var(--accent);
+}
+
 /* Footer Styles */
 .footer-info {
-  margin-top: calc(
-    5 * var(--font-size-base)
-  ); /* Adjust margin based on font size */
+  margin-top: calc(5 * var(--font-size-base));
   flex-grow: 1;
   display: flex;
   align-items: flex-end;
-  padding: calc(
-    2 * var(--font-size-base)
-  ); /* Adjust padding based on font size */
+  padding: calc(2 * var(--font-size-base));
   max-width: 50rem;
   text-align: center;
 }
@@ -75,15 +72,14 @@ body {
 .footer-info p {
   text-align: center;
   width: initial;
+  margin-left: 0.5rem;
 }
 
 /* Form Styles */
 .link-form {
-  width: 75%;
   max-width: 50rem;
   display: flex;
   gap: 0.5em;
-  flex-direction: row;
   align-items: center;
   background-color: var(--background);
   color: var(--text);
@@ -102,11 +98,22 @@ body {
   height: 100%;
 }
 
-.input-container svg {
-  transform: scale(1.2);
+#generator,
+#metadata,
+#submit-btn {
+  height: 3.5rem;
 }
 
 /* Input Styles */
+.link-input--image {
+  background-image: url(../assets//images/rinku_solo.png);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  height: 2.5rem;
+  width: 3rem;
+}
+
 input {
   color: var(--text);
   font-size: var(--font-size-base);
@@ -154,6 +161,33 @@ select:focus,
   border-bottom-color: var(--accent);
 }
 
+/* Autofill Styles */
+/* Change font color and background color for autofilled inputs */
+.input-container input:-webkit-autofill {
+  background-color: var(--darker) !important;
+  color: var(--text) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Focus Styles */
+/* Change font color and background color for focused inputs */
+.input-container input:focus {
+  background-color: var(--darker) !important;
+  color: var(--text) !important;
+}
+
+/* Specific Styles for #link-input with class .link-input */
+input#link-input.link-input {
+  background-color: var(--darker) !important;
+  color: var(--text) !important;
+}
+
+/* Additional Styles for Autofilled Text */
+/* Ensure text color is applied to autofilled text */
+.input-container input:-webkit-autofill::first-line {
+  color: var(--text) !important;
+}
+
 /* Link Styles */
 a:visited,
 a:active,
@@ -186,9 +220,126 @@ li {
   margin-left: 2rem;
 }
 
-/* Responsive Styles */
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 900px) {
   .link-form {
     flex-direction: column;
+    transition: flex-direction 0.3s ease; /* Smoother transition for flex-direction */
+    max-width: 100rem;
+  }
+
+  .link-form label,
+  .link-form select,
+  .link-form input,
+  .link-form button {
+    width: 100%;
+    margin: 5px;
+    transition: width 0.2s ease-in-out, max-width 0.2s ease-in-out; /* Smoother transition for width and max-width */
+  }
+
+  .link-form .input-container {
+    margin-bottom: 10px;
+  }
+
+  .link-input--image {
+    background-image: url(../assets//images/rinku_solo.png);
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    height: 2.5rem !important;
+    width: 4rem !important;
+  }
+
+  /* Adjusting title font size for smaller screens */
+  .title {
+    font-size: calc(
+      3 * var(--font-size-base)
+    ); /* Adjust font size based on base font size */
+    transition: font-size 0.2s ease-in-out; /* Smoother transition for font size */
+  }
+
+  #input-copy-btn {
+    width: fit-content;
+  }
+  #generator,
+  #metadata {
+    text-align: center;
+    width: 100%;
+  }
+  .footer-info {
+    margin-top: calc(5 * var(--font-size-base));
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: calc(1 * var(--font-size-base));
+    max-width: 20rem;
+    text-align: center;
+  }
+
+  .footer-info p {
+    text-align: center;
+    width: initial;
+    margin-left: 0 !important;
+  }
+}
+
+@media screen and (max-width: 280px) {
+  .link-form {
+    flex-direction: column;
+    transition: flex-direction 0.3s ease; /* Smoother transition for flex-direction */
+    max-width: 15rem;
+  }
+
+  .link-form label,
+  .link-form select,
+  .link-form input,
+  .link-form button {
+    width: 100%;
+    margin: 5px;
+    transition: width 0.2s ease-in-out, max-width 0.2s ease-in-out; /* Smoother transition for width and max-width */
+  }
+
+  .link-form .input-container {
+    margin-bottom: 10px;
+  }
+
+  .link-input--image {
+    background-image: url(../assets//images/rinku_solo.png);
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    background-size: cover !important;
+    height: 2.5rem !important;
+    width: 4rem !important;
+  }
+
+  /* Adjusting title font size for smaller screens */
+  .title {
+    font-size: calc(
+      2 * var(--font-size-base)
+    ); /* Adjust font size based on base font size */
+    transition: font-size 0.2s ease-in-out; /* Smoother transition for font size */
+  }
+
+  #input-copy-btn {
+    width: fit-content;
+  }
+  #generator,
+  #metadata {
+    text-align: center;
+    width: 100%;
+  }
+  .footer-info {
+    margin-top: calc(5 * var(--font-size-base));
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    padding: calc(1 * var(--font-size-base));
+    max-width: 20rem;
+    text-align: center;
+  }
+
+  .footer-info p {
+    text-align: center;
+    width: initial;
+    margin-left: 0 !important;
   }
 }
