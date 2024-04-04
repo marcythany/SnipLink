@@ -1,0 +1,194 @@
+@import url("https://fonts.googleapis.com/css?family=Inconsolata|Karla&display=swap");
+
+:root {
+  --background: #2f2f2e;
+  --darker: #1f1f1f;
+  --text: #c0c1c5;
+  --primary: #7494ea;
+  --secondary: #3ebae8;
+  --accent: #47ff76;
+  --error: #e56e6e;
+  --font-size-base: 1rem; /* Base font size */
+}
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box; /* Ensures consistent box-sizing */
+}
+
+/* Global Typography */
+body {
+  font-family: "Karla", sans-serif;
+  font-size: var(--font-size-base);
+}
+
+/* Selection Color */
+::selection {
+  background: var(--text);
+}
+
+/* Page Layout */
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: var(--background);
+  color: var(--text);
+  text-align: center;
+}
+
+/* Header Styles */
+.title {
+  margin-bottom: calc(
+    2 * var(--font-size-base)
+  ); /* Adjust margin based on font size */
+  font-size: calc(
+    5 * var(--font-size-base)
+  ); /* Adjust font size based on base font size */
+  color: var(--primary);
+}
+
+.title a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/* Footer Styles */
+.footer-info {
+  margin-top: calc(
+    5 * var(--font-size-base)
+  ); /* Adjust margin based on font size */
+  flex-grow: 1;
+  display: flex;
+  align-items: flex-end;
+  padding: calc(
+    2 * var(--font-size-base)
+  ); /* Adjust padding based on font size */
+  max-width: 50rem;
+  text-align: center;
+}
+
+.footer-info p {
+  text-align: center;
+  width: initial;
+}
+
+/* Form Styles */
+.link-form {
+  width: 75%;
+  max-width: 50rem;
+  display: flex;
+  gap: 0.5em;
+  flex-direction: row;
+  align-items: center;
+  background-color: var(--background);
+  color: var(--text);
+}
+
+.input-container {
+  flex-grow: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.input-container * {
+  background: unset;
+  border: unset;
+  height: 100%;
+}
+
+.input-container svg {
+  transform: scale(1.2);
+}
+
+/* Input Styles */
+input {
+  color: var(--text);
+  font-size: var(--font-size-base);
+  padding: 0.5rem;
+  background: var(--darker);
+  border-width: 0 0 2px 0;
+  border-radius: 0.25rem;
+  border-bottom-color: var(--primary);
+  transition: border-bottom-color 0.2s ease-in-out;
+  outline: none;
+}
+
+/* Button and Select Styles */
+button,
+select,
+.input-container {
+  font-size: var(--font-size-base);
+  padding: 0.5rem;
+  background: var(--darker);
+  color: var(--text);
+  font-weight: bold;
+  border-width: 0 0 2px 0;
+  border-radius: 0.25rem;
+  border-bottom-color: var(--primary);
+  border-style: solid;
+  transition: border-bottom-color 0.2s ease-in-out;
+  outline: none;
+  line-break: none;
+  cursor: pointer;
+}
+
+/* Hover and Focus States */
+.input-container button:hover,
+input:hover,
+button:hover,
+select:hover,
+.input-container:hover {
+  border-bottom-color: var(--secondary);
+}
+
+input:focus,
+button:focus,
+select:focus,
+.input-container:focus-within {
+  border-bottom-color: var(--accent);
+}
+
+/* Link Styles */
+a:visited,
+a:active,
+a:hover {
+  color: var(--secondary);
+}
+
+a {
+  color: var(--primary);
+  transition: color 0.2s ease;
+}
+
+/* Error Styles */
+.error:focus,
+.error:hover,
+.error,
+.input-container.error {
+  border-bottom-color: var(--error);
+}
+
+/* Additional Styles */
+p,
+li {
+  line-height: 1.75em;
+  margin-top: 1.25em;
+  text-align: left;
+}
+
+li {
+  margin-left: 2rem;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 800px) {
+  .link-form {
+    flex-direction: column;
+  }
+}
