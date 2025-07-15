@@ -1,23 +1,18 @@
 /**
- * SnipLink - Modern URL Shortener
+ * SnipLink - Zelda-inspired URL Shortener
  *
  * Features:
- * - Clean, modular code structure
- * - Modern async/await syntax
- * - Comprehensive error handling
- * - User feedback system
- * - Loading states
- * - Responsive design
- * - Recruiter-friendly documentation
+ * - Legend of Zelda theme throughout
+ * - shrtcode.de API integration
+ * - Link character in input field
+ * - Triforce symbols and Zelda decorations
+ * - Enhanced Zelda-themed user experience
  */
 
 // DOM Elements
-const appContainer = document.getElementById('app');
 const form = document.getElementById('shortener-form');
 const urlInput = document.getElementById('url-input');
 const clearBtn = document.getElementById('clear-btn');
-const generatorSelect = document.getElementById('generator');
-const metadataSelect = document.getElementById('metadata');
 const submitBtn = document.getElementById('submit-btn');
 const resultContainer = document.getElementById('result-container');
 const shortUrlInput = document.getElementById('short-url');
@@ -27,11 +22,7 @@ const loader = document.getElementById('loader');
 const currentYear = document.getElementById('current-year');
 
 // API Configuration
-const API_BASE = 'https://owo.vc/api/v2/link';
-const DEFAULT_HEADERS = {
-	'Content-Type': 'application/json',
-	Accept: 'application/json',
-};
+const API_URL = 'https://api.shrtco.de/v2/shorten?url=';
 
 // Initialize application
 function init() {
@@ -57,18 +48,13 @@ async function handleFormSubmit(event) {
 
 	const url = urlInput.value.trim();
 	if (!isValidUrl(url)) {
-		showError('Please enter a valid URL');
+		showError('Please enter a valid URL (starting with http:// or https://)');
 		return;
 	}
 
 	try {
 		showLoader();
-		const shortenedUrl = await shortenUrl(
-			url,
-			generatorSelect.value,
-			metadataSelect.value
-		);
-
+		const shortenedUrl = await shortenUrl(url);
 		displayResult(shortenedUrl);
 	} catch (error) {
 		showError(`Error: ${error.message}`);
@@ -92,34 +78,30 @@ function isValidUrl(url) {
 }
 
 /**
- * Shortens URL via API
+ * Shortens URL via shrtcode API
  * @param {string} originalUrl - Original URL to shorten
- * @param {string} generator - Link generator type
- * @param {string} metadata - Metadata handling option
  * @returns {Promise<string>} - Shortened URL
  */
-async function shortenUrl(originalUrl, generator, metadata) {
+async function shortenUrl(originalUrl) {
 	try {
-		const response = await fetch(API_BASE, {
-			method: 'POST',
-			headers: DEFAULT_HEADERS,
-			body: JSON.stringify({
-				link: originalUrl,
-				generator,
-				metadata,
-			}),
-		});
+		const response = await fetch(
+			`${API_URL}${encodeURIComponent(originalUrl)}`
+		);
+		const data = await response.json();
 
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.message || 'Failed to shorten URL');
+		if (!data.ok) {
+			throw new Error(data.error || 'Failed to shorten URL');
 		}
 
-		const data = await response.json();
-		return `https://${data.id}`;
+		// Return the first available short link
+		return (
+			data.result.full_short_link ||
+			data.result.short_link ||
+			`https://shrtco.de/${data.result.code}`
+		);
 	} catch (error) {
 		console.error('API Error:', error);
-		throw new Error('Network error. Please try again later.');
+		throw new Error('Failed to shorten URL. Please try again later.');
 	}
 }
 
@@ -176,8 +158,21 @@ function toggleClearButton() {
  * @param {string} message - Error message
  */
 function showError(message) {
-	// In a production app, this would show a nice toast notification
-	alert(`Error: ${message}`);
+	// Create error element if it doesn't exist
+	let errorEl = document.getElementById('error-message');
+	if (!errorEl) {
+		errorEl = document.createElement('div');
+		errorEl.id = 'error-message';
+		errorEl.className = 'error-message';
+		form.prepend(errorEl);
+	}
+
+	errorEl.textContent = message;
+	errorEl.classList.add('show');
+
+	setTimeout(() => {
+		errorEl.classList.remove('show');
+	}, 3000);
 }
 
 /**

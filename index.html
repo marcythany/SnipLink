@@ -3,17 +3,14 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta
-			name="description"
-			content="Modern URL shortener powered by owo.vc API"
-		/>
-		<title>SnipLink - Modern URL Shortener</title>
+		<meta name="description" content="Zelda-inspired URL shortener" />
+		<title>SnipLink - URL Shortener</title>
 		<link
 			rel="stylesheet"
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
 		/>
 		<link rel="stylesheet" href="css/style.css" />
-		<link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+		<link rel="icon" href="assets/images/triforce.png" type="image/png" />
 	</head>
 	<body>
 		<div id="app" class="container">
@@ -21,15 +18,24 @@
 				<h1>
 					<a href="/">Snip<span class="highlight">Link</span></a>
 				</h1>
-				<p class="tagline">Cut your URLs down to size</p>
+				<p class="tagline">Shorten your URLs like Link cuts grass!</p>
 			</header>
 
 			<main class="main-content">
 				<section class="shortener-card">
+					<div class="zelda-decoration top-left"></div>
+					<div class="zelda-decoration top-right"></div>
+
 					<form id="shortener-form" class="shortener-form">
 						<div class="form-control">
 							<label for="url-input">Your Long URL</label>
 							<div class="input-group">
+								<div class="link-input--image">
+									<img
+										src="assets/images/rinku_solo.png"
+										alt="Link from Zelda"
+									/>
+								</div>
 								<input
 									id="url-input"
 									type="url"
@@ -49,30 +55,9 @@
 							</div>
 						</div>
 
-						<div class="advanced-options">
-							<div class="form-control">
-								<label for="generator">Link Style</label>
-								<select id="generator" aria-label="Select link style">
-									<option value="owo">owo (default)</option>
-									<option value="gay">gay</option>
-									<option value="zws">zws</option>
-									<option value="sketchy">sketchy</option>
-								</select>
-							</div>
-
-							<div class="form-control">
-								<label for="metadata">Metadata</label>
-								<select id="metadata" aria-label="Select metadata handling">
-									<option value="OWOIFY">Owoify metadata</option>
-									<option value="PROXY">Proxy metadata</option>
-									<option value="IGNORE">Ignore metadata</option>
-								</select>
-							</div>
-						</div>
-
 						<button type="submit" id="submit-btn" class="primary-btn">
 							<span>Shorten URL</span>
-							<i class="fas fa-cut"></i>
+							<i class="fas fa-sword"></i>
 						</button>
 					</form>
 
@@ -95,25 +80,28 @@
 							<div id="copy-feedback" class="copy-feedback">Copied!</div>
 						</div>
 					</div>
+
+					<div class="zelda-decoration bottom-left"></div>
+					<div class="zelda-decoration bottom-right"></div>
 				</section>
 
 				<section class="features-section">
 					<h2>Why SnipLink?</h2>
 					<div class="features-grid">
 						<div class="feature-card">
-							<i class="fas fa-bolt"></i>
-							<h3>Lightning Fast</h3>
-							<p>Generate short links in milliseconds</p>
+							<i class="fas fa-rupee-sign"></i>
+							<h3>Golden Efficiency</h3>
+							<p>Shorten links faster than collecting rupees</p>
 						</div>
 						<div class="feature-card">
 							<i class="fas fa-shield-alt"></i>
-							<h3>Secure</h3>
-							<p>All links are encrypted in transit</p>
+							<h3>Hylian Security</h3>
+							<p>Protected like the Master Sword</p>
 						</div>
 						<div class="feature-card">
-							<i class="fas fa-infinity"></i>
-							<h3>Unlimited</h3>
-							<p>Create as many links as you need</p>
+							<i class="fas fa-dungeon"></i>
+							<h3>Adventure Ready</h3>
+							<p>Short links for your Hyrule adventures</p>
 						</div>
 					</div>
 				</section>
@@ -130,11 +118,9 @@
 							>Marcy</a
 						>
 					</p>
-					<p>
-						Powered by
-						<a href="https://owo.vc" target="_blank" rel="noopener">owo.vc</a>
-					</p>
+					<p>Powered by the Triforce of Wisdom</p>
 				</div>
+				<div class="triforce-symbol">▲<br />▲ ▲</div>
 			</footer>
 		</div>
 
