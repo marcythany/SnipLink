@@ -154,36 +154,7 @@ h3 {
 
 /* Zelda Decorations */
 .zelda-decoration {
-	position: absolute;
-	width: 40px;
-	height: 40px;
-	background-size: contain;
-	background-repeat: no-repeat;
-	z-index: 5;
-
-	&.top-left {
-		top: -20px;
-		left: -20px;
-		background-image: url('../assets/images/zelda_corner_tl.png');
-	}
-
-	&.top-right {
-		top: -20px;
-		right: -20px;
-		background-image: url('../assets/images/zelda_corner_tr.png');
-	}
-
-	&.bottom-left {
-		bottom: -20px;
-		left: -20px;
-		background-image: url('../assets/images/zelda_corner_bl.png');
-	}
-
-	&.bottom-right {
-		bottom: -20px;
-		right: -20px;
-		background-image: url('../assets/images/zelda_corner_br.png');
-	}
+	background: linear-gradient(135deg, transparent 70%, #d4af37 70%);
 }
 
 /* Card Container */
