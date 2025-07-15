@@ -1,299 +1,200 @@
 /**
- * Fetches link information from the owo.vc API.
- * @param {string} shortenedLink The shortened link to fetch information for.
- * @returns {Promise<Object|null>} A promise resolving to the fetched link information, or null if an error occurs.
+ * SnipLink - Modern URL Shortener
+ *
+ * Features:
+ * - Clean, modular code structure
+ * - Modern async/await syntax
+ * - Comprehensive error handling
+ * - User feedback system
+ * - Loading states
+ * - Responsive design
+ * - Recruiter-friendly documentation
  */
-async function getLinkInfo(shortenedLink) {
-  const apiUrl = `https://owo.vc/api/v2/link/${encodeURIComponent(
-    shortenedLink
-  )}`;
 
-  try {
-    const response = await fetch(apiUrl);
-    if (response.ok) {
-      return await response.json();
-    } else {
-      throw new Error("Failed to fetch link info");
-    }
-  } catch (error) {
-    console.error("Error getting link information:", error.message);
-    return null;
-  }
+// DOM Elements
+const appContainer = document.getElementById('app');
+const form = document.getElementById('shortener-form');
+const urlInput = document.getElementById('url-input');
+const clearBtn = document.getElementById('clear-btn');
+const generatorSelect = document.getElementById('generator');
+const metadataSelect = document.getElementById('metadata');
+const submitBtn = document.getElementById('submit-btn');
+const resultContainer = document.getElementById('result-container');
+const shortUrlInput = document.getElementById('short-url');
+const copyBtn = document.getElementById('copy-btn');
+const copyFeedback = document.getElementById('copy-feedback');
+const loader = document.getElementById('loader');
+const currentYear = document.getElementById('current-year');
+
+// API Configuration
+const API_BASE = 'https://owo.vc/api/v2/link';
+const DEFAULT_HEADERS = {
+	'Content-Type': 'application/json',
+	Accept: 'application/json',
+};
+
+// Initialize application
+function init() {
+	// Set current year in footer
+	currentYear.textContent = new Date().getFullYear();
+
+	// Event listeners
+	form.addEventListener('submit', handleFormSubmit);
+	clearBtn.addEventListener('click', clearInput);
+	copyBtn.addEventListener('click', copyToClipboard);
+	urlInput.addEventListener('input', toggleClearButton);
+
+	// Initialize UI state
+	toggleClearButton();
 }
 
-// Function to generate a shortened link
-async function generateShortenedLink(originalLink, generator, metadata) {
-  const apiUrl = "https://owo.vc/api/v2/link";
+/**
+ * Handles form submission
+ * @param {Event} event - Form submit event
+ */
+async function handleFormSubmit(event) {
+	event.preventDefault();
 
-  const requestBody = JSON.stringify({
-    link: originalLink,
-    generator: generator,
-    metadata: metadata,
-  });
+	const url = urlInput.value.trim();
+	if (!isValidUrl(url)) {
+		showError('Please enter a valid URL');
+		return;
+	}
 
-  try {
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: requestBody,
-    });
+	try {
+		showLoader();
+		const shortenedUrl = await shortenUrl(
+			url,
+			generatorSelect.value,
+			metadataSelect.value
+		);
 
-    if (response.ok) {
-      const data = await response.json();
-      if (data && data.id) {
-        let shortenedLink = data.id;
-        // Prepend protocol if missing
-        if (
-          !shortenedLink.startsWith("http://") &&
-          !shortenedLink.startsWith("https://")
-        ) {
-          shortenedLink = "https://" + shortenedLink;
-        }
-        return shortenedLink; // Return the shortened link
-      } else {
-        console.error("Shortened link not found in response data");
-        return null;
-      }
-    } else {
-      throw new Error("Failed to generate shortened link");
-    }
-  } catch (error) {
-    console.error("Error generating shortened link:", error.message);
-    return null;
-  }
+		displayResult(shortenedUrl);
+	} catch (error) {
+		showError(`Error: ${error.message}`);
+	} finally {
+		hideLoader();
+	}
 }
 
-// Function to handle form submission
-async function handleSubmit(event) {
-  event.preventDefault(); // Prevent the default form submission
-
-  const form = event.target; // Get the form element
-  const input = form.querySelector(".link-input");
-  const linkInput = form.querySelector(".link-input");
-  const link = input.value.trim(); // Get the input value and trim whitespace
-
-  if (!link) return; // If the input is empty, do nothing
-
-  const generatorSelect = form.querySelector("#generator");
-  const metadataSelect = form.querySelector("#metadata");
-
-  const generator = generatorSelect.value;
-  const metadata = metadataSelect.value;
-
-  try {
-    const shortenedLink = await generateShortenedLink(
-      link,
-      generator,
-      metadata
-    );
-
-    if (shortenedLink) {
-      linkInput.value = shortenedLink; // Update the input value with the shortened link
-      // Enable the copy button
-      const copyButton = form.querySelector("#input-copy-btn");
-      copyButton.disabled = false;
-
-      // Add event listener to copy button
-      copyButton.addEventListener("click", () => {
-        // Copy the shortened link to the clipboard
-        navigator.clipboard
-          .writeText(shortenedLink)
-          .then(() => {
-            console.log("Shortened link copied to clipboard:", shortenedLink);
-            // Optionally, you can provide user feedback here
-          })
-          .catch((error) => {
-            console.error("Error copying shortened link to clipboard:", error);
-          });
-      });
-    } else {
-      console.error("Failed to generate shortened link.");
-    }
-  } catch (error) {
-    console.error("Error:", error.message);
-  }
+/**
+ * Validates URL format
+ * @param {string} url - URL to validate
+ * @returns {boolean} - Validation result
+ */
+function isValidUrl(url) {
+	try {
+		new URL(url);
+		return true;
+	} catch (error) {
+		return false;
+	}
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  // Create header element
-  const header = document.createElement("header");
-  header.classList.add("title");
+/**
+ * Shortens URL via API
+ * @param {string} originalUrl - Original URL to shorten
+ * @param {string} generator - Link generator type
+ * @param {string} metadata - Metadata handling option
+ * @returns {Promise<string>} - Shortened URL
+ */
+async function shortenUrl(originalUrl, generator, metadata) {
+	try {
+		const response = await fetch(API_BASE, {
+			method: 'POST',
+			headers: DEFAULT_HEADERS,
+			body: JSON.stringify({
+				link: originalUrl,
+				generator,
+				metadata,
+			}),
+		});
 
-  // Create h1 element
-  const h1 = document.createElement("h1");
+		if (!response.ok) {
+			const errorData = await response.json();
+			throw new Error(errorData.message || 'Failed to shorten URL');
+		}
 
-  // Create anchor element
-  const anchor = document.createElement("a");
-  anchor.href = "/";
+		const data = await response.json();
+		return `https://${data.id}`;
+	} catch (error) {
+		console.error('API Error:', error);
+		throw new Error('Network error. Please try again later.');
+	}
+}
 
-  // Create span element for "Link"
-  const span = document.createElement("span");
-  span.classList.add("link");
-  span.textContent = "Link";
+/**
+ * Displays shortened URL result
+ * @param {string} url - Shortened URL
+ */
+function displayResult(url) {
+	shortUrlInput.value = url;
+	resultContainer.classList.remove('hidden');
 
-  // Append elements
-  anchor.appendChild(document.createTextNode("Snip"));
-  anchor.appendChild(span);
-  h1.appendChild(anchor);
-  header.appendChild(h1);
+	// Scroll to result for better UX
+	resultContainer.scrollIntoView({
+		behavior: 'smooth',
+		block: 'nearest',
+	});
+}
 
-  // Append header to body
-  document.body.appendChild(header);
+/**
+ * Copies text to clipboard
+ */
+async function copyToClipboard() {
+	try {
+		await navigator.clipboard.writeText(shortUrlInput.value);
 
-  // Create main element
-  const main = document.createElement("main");
+		// Show feedback
+		copyFeedback.classList.add('show');
+		setTimeout(() => {
+			copyFeedback.classList.remove('show');
+		}, 2000);
+	} catch (error) {
+		showError('Failed to copy to clipboard');
+	}
+}
 
-  // Create section element for link form
-  const section = document.createElement("section");
-  section.classList.add("link-form");
+/**
+ * Clears URL input field
+ */
+function clearInput() {
+	urlInput.value = '';
+	urlInput.focus();
+	toggleClearButton();
+}
 
-  // Create label for "Generator"
-  const generatorLabel = document.createElement("label");
-  generatorLabel.textContent = "Generator:";
+/**
+ * Toggles clear button visibility
+ */
+function toggleClearButton() {
+	clearBtn.style.visibility = urlInput.value ? 'visible' : 'hidden';
+}
 
-  // Create select element for generator
-  const generatorSelect = document.createElement("select");
-  generatorSelect.name = "generator";
-  generatorSelect.id = "generator";
+/**
+ * Shows error message
+ * @param {string} message - Error message
+ */
+function showError(message) {
+	// In a production app, this would show a nice toast notification
+	alert(`Error: ${message}`);
+}
 
-  // Create options for generator select
-  const generatorOptions = ["owo", "gay", "zws", "sketchy"];
-  generatorOptions.forEach((option) => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option;
-    optionElement.textContent = option;
-    generatorSelect.appendChild(optionElement);
-  });
+/**
+ * Shows loading spinner
+ */
+function showLoader() {
+	loader.classList.remove('hidden');
+	submitBtn.disabled = true;
+}
 
-  // Create div element for input container
-  const inputContainer = document.createElement("div");
-  inputContainer.classList.add("input-container");
+/**
+ * Hides loading spinner
+ */
+function hideLoader() {
+	loader.classList.add('hidden');
+	submitBtn.disabled = false;
+}
 
-  // Create label for "Link"
-  const linkLabel = document.createElement("label");
-  linkLabel.setAttribute("for", "link-input");
-  linkLabel.classList.add("link-input--image");
-
-  // Create input element for link input
-  const linkInput = document.createElement("input");
-  linkInput.type = "text";
-  linkInput.id = "link-input";
-  linkInput.placeholder = "Enter your URL...";
-  linkInput.classList.add("link-input");
-
-  // Create button element for copy
-  const copyButton = document.createElement("button");
-  copyButton.type = "button";
-  copyButton.id = "input-copy-btn";
-  copyButton.setAttribute("aria-label", "Copy");
-
-  // Create icon element for copy button
-  const copyIcon = document.createElement("i");
-  copyIcon.classList.add("fa-solid", "fa-copy");
-
-  // Append icon to copy button
-  copyButton.appendChild(copyIcon);
-
-  // Append elements to input container
-  inputContainer.appendChild(linkLabel);
-  inputContainer.appendChild(linkInput);
-  inputContainer.appendChild(copyButton);
-
-  // Create label for "Metadata"
-  const metadataLabel = document.createElement("label");
-  metadataLabel.textContent = "Metadata:";
-
-  // Create select element for metadata
-  const metadataSelect = document.createElement("select");
-  metadataSelect.name = "metadata";
-  metadataSelect.id = "metadata";
-
-  // Create options for metadata select
-  const metadataOptions = [
-    "Owoify metadata",
-    "Proxy metadata",
-    "Ignore metadata",
-  ];
-  metadataOptions.forEach((option) => {
-    const optionElement = document.createElement("option");
-    optionElement.value = option.split(" ")[0].toUpperCase();
-    optionElement.textContent = option;
-    metadataSelect.appendChild(optionElement);
-  });
-
-  // Create form element
-  const dynamicForm = document.createElement("form");
-  dynamicForm.classList.add("link-form");
-
-  // Create button element for submit
-  const submitButton = document.createElement("button");
-  submitButton.type = "submit"; // Change type to "submit"
-  submitButton.id = "submit-btn";
-  submitButton.setAttribute("aria-label", "Shorten");
-  submitButton.textContent = "Shorten";
-
-  // Append elements to form
-  dynamicForm.appendChild(generatorLabel);
-  dynamicForm.appendChild(generatorSelect);
-  dynamicForm.appendChild(inputContainer);
-  dynamicForm.appendChild(metadataLabel);
-  dynamicForm.appendChild(metadataSelect);
-  dynamicForm.appendChild(submitButton);
-
-  // Add event listener for form submission
-  dynamicForm.addEventListener("submit", handleSubmit);
-
-  // Append form to section
-  section.appendChild(dynamicForm);
-
-  // Append section to main
-  main.appendChild(section);
-
-  // Append main to body
-  document.body.appendChild(main);
-
-  // Create footer element
-  const footer = document.createElement("footer");
-  footer.classList.add("footer-info");
-
-  // Create paragraph element for copyright
-  const copyrightParagraph = document.createElement("p");
-
-  // Create copyright text
-  const copyrightText = document.createTextNode(
-    `© ${new Date().getFullYear()} - Made with love by `
-  );
-
-  // Create anchor element for Marcy's GitHub profile
-  const githubAnchor = document.createElement("a");
-  githubAnchor.href = "https://github.com/marcythany";
-  githubAnchor.textContent = "Marcy";
-
-  // Append elements to copyright paragraph
-  copyrightParagraph.appendChild(copyrightText);
-  copyrightParagraph.appendChild(githubAnchor);
-
-  // Create second paragraph element for powered by message
-  const poweredByParagraph = document.createElement("p");
-
-  // Create powered by text
-  const poweredByText = document.createTextNode("Powered by ");
-
-  // Create anchor element for owo.vc
-  const owoAnchor = document.createElement("a");
-  owoAnchor.href = "https://owo.vc";
-  owoAnchor.textContent = "owo.vc";
-
-  // Append elements to powered by paragraph
-  poweredByParagraph.appendChild(poweredByText);
-  poweredByParagraph.appendChild(owoAnchor);
-
-  // Append paragraphs to footer
-  footer.appendChild(copyrightParagraph);
-  footer.appendChild(poweredByParagraph);
-
-  // Append footer to body
-  document.body.appendChild(footer);
-});
+// Initialize the application when DOM is ready
+document.addEventListener('DOMContentLoaded', init);
