@@ -3,7 +3,7 @@
  *
  * Features:
  * - Legend of Zelda theme throughout
- * - shrtcode.de API integration
+ * - is.gd API integration
  * - Link character in input field
  * - Triforce symbols and Zelda decorations
  * - Enhanced Zelda-themed user experience
@@ -22,7 +22,7 @@ const loader = document.getElementById('loader');
 const currentYear = document.getElementById('current-year');
 
 // API Configuration
-const API_URL = 'https://api.shrtco.de/v2/shorten?url=';
+const API_URL = 'https://is.gd/create.php?format=json&url=';
 
 // Initialize application
 function init() {
@@ -78,27 +78,28 @@ function isValidUrl(url) {
 }
 
 /**
- * Shortens URL via shrtcode API
+ * Shortens URL via is.gd API
  * @param {string} originalUrl - Original URL to shorten
  * @returns {Promise<string>} - Shortened URL
  */
 async function shortenUrl(originalUrl) {
 	try {
-		const response = await fetch(
-			`${API_URL}${encodeURIComponent(originalUrl)}`
-		);
-		const data = await response.json();
+		const apiUrl = `${API_URL}${encodeURIComponent(originalUrl)}`;
+		const response = await fetch(apiUrl);
 
-		if (!data.ok) {
-			throw new Error(data.error || 'Failed to shorten URL');
+		if (!response.ok) {
+			throw new Error(`HTTP error! Status: ${response.status}`);
 		}
 
-		// Return the first available short link
-		return (
-			data.result.full_short_link ||
-			data.result.short_link ||
-			`https://shrtco.de/${data.result.code}`
-		);
+		const data = await response.json();
+
+		if (data.shorturl) {
+			return data.shorturl;
+		} else if (data.errorcode) {
+			throw new Error(`API Error: ${data.errormessage}`);
+		} else {
+			throw new Error('Unknown API response');
+		}
 	} catch (error) {
 		console.error('API Error:', error);
 		throw new Error('Failed to shorten URL. Please try again later.');
