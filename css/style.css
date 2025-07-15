@@ -52,7 +52,11 @@ html {
 
 body {
 	font-family: var(--font-base);
-	background: linear-gradient(135deg, var(--hyrule-dark), var(--hyrule-green));
+	background: linear-gradient(
+		135deg,
+		var(--hyrule-dark),
+		var(--hyrule-green)
+	) !important;
 	color: var(--text-light);
 	line-height: 1.6;
 	min-height: 100vh;
